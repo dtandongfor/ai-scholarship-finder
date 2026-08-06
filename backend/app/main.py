@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routes import scholarships
+from .routes import scholarships, students, recommendations
 from .database import engine, Base
 from . import models
 
@@ -13,6 +13,17 @@ app.include_router(
     tags=["Scholarships"]
 )
 
+app.include_router(
+    students.router,
+    prefix="/students",
+    tags=["Students"]
+)
+
+app.include_router(
+    recommendations.router,
+    prefix="/recommendations",
+    tags=["Recommendations"]
+)
 
 @app.get("/")
 def home():
