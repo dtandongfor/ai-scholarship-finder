@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from .. import models, schemas, crud
+from ..services import profile_service
 
 router = APIRouter()
 
@@ -66,3 +67,16 @@ def delete_student(
         )
 
     return student
+
+@router.get(
+    "/{student_id}/analysis",
+    response_model=schemas.ProfileAnalysisResponse
+)
+def analyze_student(
+    student_id: int,
+    db: Session = Depends(get_db)
+):
+    return profile_service.analyze_student(
+        db,
+        student_id
+    )

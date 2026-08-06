@@ -79,6 +79,7 @@ class RecommendationMatch(BaseModel):
     raw_score: int
     matched_on: list[str]
     explanations: list
+    summary: str
     scholarship: Scholarship
 
 
@@ -87,3 +88,40 @@ class RecommendationResponse(BaseModel):
     matches_found: int
     matches: list[RecommendationMatch]
 
+class ProfileAnalysisResponse(BaseModel):
+    student: str
+    profile_strength: int
+    strengths: list[str]
+    weaknesses: list[str]
+    recommendations: list[str]
+
+    ai_summary: str 
+    ai_advice: list[str] 
+    improvement_plan: list[ImprovementItem]
+
+class ImprovementItem(BaseModel):
+    category: str
+    scholarships: int
+    reason: str
+    action: str
+ 
+
+class ProfileAnalysis(ProfileAnalysisResponse):
+    pass
+
+class ImprovementSimulationRequest(BaseModel):
+    category: str
+    value: str
+
+
+class ImprovementSimulationResponse(BaseModel):
+    improvement: str
+    current_matches: int
+    projected_matches: int
+    increase: int
+
+    current_average_score: int
+    projected_average_score: int
+    score_change: int
+
+    impact: str

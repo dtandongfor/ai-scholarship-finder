@@ -2,89 +2,160 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from .. import models, schemas, crud
+from .. import schemas, crud
+from ..services import search_service
 
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Scholarship])
-def get_scholarships(db: Session = Depends(get_db)):
+# ============================
+# SEARCH SCHOLARSHIPS
+# ============================
+
+@router.get(
+    "/search",
+    response_model=list[schemas.Scholarship]
+)
+def search_scholarships(
+    keyword: str | None = None,
+    major: str | None = None,
+    state: str | None = None,
+    citizenship: str | None = None,
+    db: Session = Depends(get_db)
+):
+
+    return search_service.search_scholarships(
+        db,
+        keyword,
+        major,
+        state,
+        citizenship
+    )
+
+
+# ============================
+# GET ALL SCHOLARSHIPS
+# ============================
+
+@router.get(
+    "/",
+    response_model=list[schemas.Scholarship]
+)
+def get_scholarships(
+    db: Session = Depends(get_db)
+):
+
     return crud.get_scholarships(db)
 
-@router.get("/{scholarship_id}", response_model=schemas.Scholarship)
-def get_scholarship(
-    scholarship_id: int,
-    db: Session = Depends(get_db)
-):
-    scholarship = db.query(models.Scholarship).filter(
-        models.Scholarship.id == scholarship_id
-    ).first()
 
-    if scholarship is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Scholarship not found"
-        )
 
-    return scholarship
+# ============================
+# CREATE SCHOLARSHIP
+# ============================
 
-@router.put("/{scholarship_id}", response_model=schemas.Scholarship)
-def update_scholarship(
-    scholarship_id: int,
-    updated: schemas.ScholarshipUpdate,
-    db: Session = Depends(get_db)
-):
-    scholarship = (
-        db.query(models.Scholarship)
-        .filter(models.Scholarship.id == scholarship_id)
-        .first()
-    )
-
-    if scholarship is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Scholarship not found"
-        )
-
-    scholarship.name = updated.name
-    scholarship.provider = updated.provider
-    scholarship.amount = updated.amount
-    scholarship.deadline = updated.deadline
-    scholarship.major = updated.major
-    scholarship.gpa_requirement = updated.gpa_requirement
-    scholarship.eligibility = updated.eligibility
-
-    db.commit()
-    db.refresh(scholarship)
-
-    return scholarship
-
-@router.delete("/{scholarship_id}")
-def delete_scholarship(
-    scholarship_id: int,
-    db: Session = Depends(get_db)
-):
-    scholarship = (
-        db.query(models.Scholarship)
-        .filter(models.Scholarship.id == scholarship_id)
-        .first()
-    )
-
-    if scholarship is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Scholarship not found"
-        )
-
-    db.delete(scholarship)
-    db.commit()
-
-    return {"message": "Scholarship deleted successfully"}
-
-@router.post("/", response_model=schemas.Scholarship)
+@router.post(
+    "/",
+    response_model=schemas.Scholarship
+)
 def create_scholarship(
     scholarship: schemas.ScholarshipCreate,
     db: Session = Depends(get_db)
 ):
-    return crud.create_scholarship(db, scholarship)
+
+    return crud.create_scholarship(
+        db,
+        scholarship
+    )
+
+
+
+# ============================
+# GET SINGLE SCHOLARSHIP
+# ============================
+
+@router.get(
+    "/{scholarship_id}",
+    response_model=schemas.Scholarship
+)
+def get_scholarship(
+    scholarship_id: int,
+    db: Session = Depends(get_db)
+):
+
+    scholarship = crud.get_scholarship(
+        db,
+        scholarship_id
+    )
+
+
+    if scholarship is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scholarship not found"
+        )
+
+
+    return scholarship
+
+
+
+# ============================
+# UPDATE SCHOLARSHIP
+# ============================
+
+@router.put(
+    "/{scholarship_id}",
+    response_model=schemas.Scholarship
+)
+def update_scholarship(
+    scholarship_id: int,
+    scholarship_update: schemas.ScholarshipUpdate,
+    db: Session = Depends(get_db)
+):
+
+    scholarship = crud.update_scholarship(
+        db,
+        scholarship_id,
+        scholarship_update
+    )
+
+
+    if scholarship is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scholarship not found"
+        )
+
+
+    return scholarship
+
+
+
+# ============================
+# DELETE SCHOLARSHIP
+# ============================
+
+@router.delete(
+    "/{scholarship_id}",
+    response_model=schemas.Scholarship
+)
+def delete_scholarship(
+    scholarship_id: int,
+    db: Session = Depends(get_db)
+):
+
+    scholarship = crud.delete_scholarship(
+        db,
+        scholarship_id
+    )
+
+
+    if scholarship is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Scholarship not found"
+        )
+
+
+    return scholarship
