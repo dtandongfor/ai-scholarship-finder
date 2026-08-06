@@ -4,6 +4,7 @@ from .database import engine, Base
 from . import models
 from .routes import simulation
 from .routes import search
+from .routes import dashboard
 
 Base.metadata.create_all(bind=engine)
 
@@ -37,4 +38,10 @@ def home():
 
 app.include_router(
     simulation.router
+)
+
+app.include_router(
+    dashboard.router,
+    prefix="/dashboard",
+    tags=["Dashboard"]
 )

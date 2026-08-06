@@ -125,3 +125,12 @@ class ImprovementSimulationResponse(BaseModel):
     score_change: int
 
     impact: str
+
+class DashboardResponse(BaseModel):
+    student: str
+    profile_strength: int
+    strengths: list[str]
+    weaknesses: list[str]
+    recommendations: list[str]
+    top_matches: list[RecommendationMatch]
+    improvement_plan: list[ImprovementItem]
