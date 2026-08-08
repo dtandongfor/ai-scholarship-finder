@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy import Boolean, Column, DateTime, Integer, JSON, String
 from .database import Base
 
 
@@ -27,6 +27,16 @@ class Scholarship(Base):
     certifications = Column(String)
 
     weights = Column(JSON)
+
+    # Keep enough source information to verify and refresh imported data.
+    source_name = Column(String)
+    source_id = Column(String)
+    source_url = Column(String)
+    application_url = Column(String)
+    description = Column(String)
+    requirements_raw = Column(String)
+    last_verified_at = Column(DateTime)
+    is_active = Column(Boolean, nullable=False, default=True)
     
 
 

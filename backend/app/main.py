@@ -1,12 +1,13 @@
 from fastapi import FastAPI
-from .routes import scholarships, students, recommendations
-from .database import engine, Base
+from .routes import ai, ingestion, scholarships, students, recommendations
+from .database import engine, Base, migrate_schema
 from . import models
 from .routes import simulation
 from .routes import search
 from .routes import dashboard
 
 Base.metadata.create_all(bind=engine)
+migrate_schema()
 
 app = FastAPI()
 
@@ -44,4 +45,16 @@ app.include_router(
     dashboard.router,
     prefix="/dashboard",
     tags=["Dashboard"]
+)
+
+app.include_router(
+    ingestion.router,
+    prefix="/ingestion",
+    tags=["Ingestion"],
+)
+
+app.include_router(
+    ai.router,
+    prefix="/ai",
+    tags=["AI"],
 )

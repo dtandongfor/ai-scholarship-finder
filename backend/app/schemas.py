@@ -1,3 +1,7 @@
+from datetime import datetime
+
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -20,6 +24,16 @@ class ScholarshipBase(BaseModel):
     certifications: str | None = None
     weights: dict[str, int] | None = None
 
+    # Source-tracking fields used by the future data-ingestion pipeline.
+    source_name: str | None = None
+    source_id: str | None = None
+    source_url: str | None = None
+    application_url: str | None = None
+    description: str | None = None
+    requirements_raw: str | None = None
+    last_verified_at: datetime | None = None
+    is_active: bool = True
+
 class ScholarshipCreate(ScholarshipBase):
     pass
 
@@ -33,6 +47,55 @@ class Scholarship(ScholarshipBase):
 
     class Config:
         from_attributes = True
+
+
+class ScholarshipIngestRequest(ScholarshipBase):
+    """A scholarship record received from a source or parser."""
+
+    source_name: str
+
+
+class ScholarshipIngestResponse(BaseModel):
+    action: Literal["created", "updated"]
+    scholarship: Scholarship
+
+
+class ScholarshipParseRequest(BaseModel):
+    source_name: str
+    description: str
+    source_id: str | None = None
+    source_url: str | None = None
+    application_url: str | None = None
+
+
+class ScholarshipParsedData(BaseModel):
+    name: str | None = None
+    provider: str | None = None
+    amount: str | None = None
+    deadline: str | None = None
+    major: str | None = None
+    gpa_requirement: str | None = None
+    eligibility: str | None = None
+    state: str | None = None
+    citizenship: str | None = None
+    interests: str | None = None
+    skills: str | None = None
+    projects: str | None = None
+    leadership: str | None = None
+    volunteer: str | None = None
+    certifications: str | None = None
+    requirements_raw: str | None = None
+
+
+class ScholarshipParseResponse(BaseModel):
+    parsed: ScholarshipParsedData
+    source_name: str
+    source_id: str | None = None
+    source_url: str | None = None
+    application_url: str | None = None
+    description: str
+    ready_to_ingest: bool
+    missing_required_fields: list[str]
 
 class StudentBase(BaseModel):
     name: str
@@ -71,12 +134,14 @@ class Student(StudentBase):
 
 class MatchExplanation(BaseModel):
     category: str
-    points: int
+    points: float
     details: list[str] = []
 
 class RecommendationMatch(BaseModel):
     score: int
-    raw_score: int
+    raw_score: float
+    eligible: bool
+    ineligibility_reasons: list[str]
     match_level: str
     matched_on: list[str]
     explanations: list

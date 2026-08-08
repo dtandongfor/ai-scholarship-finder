@@ -1,5 +1,5 @@
 from .knowledge import SKILL_SYNONYMS
-from .utils import normalize_list, semantic_match
+from .utils import normalize_list, requirement_match_ratio
 
 
 def check_skills(student, scholarship):
@@ -40,11 +40,7 @@ def check_skills(student, scholarship):
         scholarship.skills
     )
 
-    # ==========================================
-    # FIND SEMANTIC MATCH
-    # ==========================================
-
-    matched, student_match, scholarship_match = semantic_match(
+    match_ratio, matches = requirement_match_ratio(
         student_skills,
         scholarship_skills,
         SKILL_SYNONYMS
@@ -54,15 +50,16 @@ def check_skills(student, scholarship):
     # MATCH FOUND
     # ==========================================
 
-    if matched:
+    if matches:
 
         return {
             "matched": True,
-            "points": 0,
+            "match_ratio": match_ratio,
             "details": [
                 f"{student_match.title()} matches "
                 f"the required skill "
                 f"{scholarship_match.title()}."
+                for student_match, scholarship_match in matches
             ]
         }
 

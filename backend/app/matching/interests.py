@@ -1,4 +1,9 @@
-from app.matching.utils import is_valid_value
+from app.matching.utils import (
+    is_valid_value,
+    normalize_list,
+    requirement_match_ratio,
+)
+from app.matching.knowledge import INTEREST_SYNONYMS
 
 
 def check_interests(student, scholarship):
@@ -15,39 +20,24 @@ def check_interests(student, scholarship):
             "points": 0
         }
 
-    student_interests = student.interests.lower()
-    scholarship_interests = scholarship.interests.lower()
+    student_items = normalize_list(student.interests)
+    scholarship_items = normalize_list(scholarship.interests)
 
-    student_items = [
-        item.strip()
-        for item in student_interests.split(",")
-        if item.strip()
-    ]
-
-    scholarship_items = [
-        item.strip()
-        for item in scholarship_interests.split(",")
-        if item.strip()
-    ]
-
-    matches = [
-        item
-        for item in scholarship_items
-        if any(
-            item in student_item
-            or student_item in item
-            for student_item in student_items
-        )
-    ]
+    match_ratio, matches = requirement_match_ratio(
+        student_items,
+        scholarship_items,
+        INTEREST_SYNONYMS,
+    )
 
     if matches:
 
         return {
             "matched": True,
-            "points": 15,
+            "match_ratio": match_ratio,
             "details": [
-                f"{match.title()} matches {match.title()}."
-                for match in matches
+                f"{student_match.title()} matches the scholarship interest "
+                f"{scholarship_match.title()}."
+                for student_match, scholarship_match in matches
             ]
         }
 

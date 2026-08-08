@@ -24,7 +24,7 @@ def simulate_improvement(student, scholarships, improvement):
             result["score"]
         )
 
-        if result["score"] >= 50:
+        if result["eligible"] and result["score"] >= 50:
             current_matches += 1
 
 
@@ -56,7 +56,7 @@ def simulate_improvement(student, scholarships, improvement):
             result["score"]
         )
 
-        if result["score"] >= 50:
+        if result["eligible"] and result["score"] >= 50:
             projected_matches += 1
 
 

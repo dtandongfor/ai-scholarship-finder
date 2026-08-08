@@ -1,5 +1,24 @@
 from .knowledge import CERTIFICATION_GROUPS
-from .utils import normalize_list
+from .utils import normalize_list, requirement_match_ratio
+
+
+def certifications_match(student_cert, scholarship_cert):
+    if student_cert == scholarship_cert:
+        return True
+
+    for group_name, group_values in CERTIFICATION_GROUPS.items():
+        group_terms = [group_name.lower(), *map(str.lower, group_values)]
+
+        student_in_group = any(term in student_cert for term in group_terms)
+        scholarship_in_group = any(
+            term in scholarship_cert
+            for term in group_terms
+        )
+
+        if student_in_group and scholarship_in_group:
+            return True
+
+    return False
 
 
 def check_certifications(student, scholarship):
@@ -28,67 +47,21 @@ def check_certifications(student, scholarship):
         scholarship.certifications
     )
 
-    matches = []
+    match_ratio, matched_pairs = requirement_match_ratio(
+        student_certs,
+        scholarship_certs,
+        match_function=certifications_match,
+    )
 
-    for scholarship_cert in scholarship_certs:
-
-        for student_cert in student_certs:
-
-            # ------------------------------------------
-            # EXACT MATCH
-            # ------------------------------------------
-
-            if scholarship_cert == student_cert:
-                matches.append(
-                    f"{student_cert.title()} matches "
-                    f"{scholarship_cert.title()}."
-                )
-                continue
-
-            # ------------------------------------------
-            # CERTIFICATION GROUP MATCH
-            # ------------------------------------------
-
-            for group_name, group_values in CERTIFICATION_GROUPS.items():
-
-                group_values = [
-                    value.lower()
-                    for value in group_values
-                ]
-
-                scholarship_in_group = (
-                    group_name.lower() in scholarship_cert
-                    or any(
-                        value in scholarship_cert
-                        for value in group_values
-                    )
-                )
-
-                student_in_group = (
-                    group_name.lower() in student_cert
-                    or any(
-                        value in student_cert
-                        for value in group_values
-                    )
-                )
-
-                if scholarship_in_group and student_in_group:
-
-                    matches.append(
-                        f"{student_cert.title()} belongs to the "
-                        f"{group_name.upper()} certification group."
-                    )
-
-                    break
-
-    # Remove duplicate explanations
-    matches = list(dict.fromkeys(matches))
-
-    if matches:
+    if matched_pairs:
         return {
             "matched": True,
-            "points": 1,
-            "details": matches
+            "match_ratio": match_ratio,
+            "details": [
+                f"{student_cert.title()} matches the required certification "
+                f"{scholarship_cert.title()}."
+                for student_cert, scholarship_cert in matched_pairs
+            ]
         }
 
     return {

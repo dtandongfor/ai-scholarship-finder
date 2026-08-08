@@ -12,22 +12,7 @@ def create_scholarship(
     scholarship: schemas.ScholarshipCreate
 ):
     db_scholarship = models.Scholarship(
-        name=scholarship.name,
-        provider=scholarship.provider,
-        amount=scholarship.amount,
-        deadline=scholarship.deadline,
-        major=scholarship.major,
-        gpa_requirement=scholarship.gpa_requirement,
-        eligibility=scholarship.eligibility,
-        state=scholarship.state,
-        citizenship=scholarship.citizenship,
-        interests=scholarship.interests,
-        skills=scholarship.skills,
-        projects=scholarship.projects,
-        leadership=scholarship.leadership,
-        volunteer=scholarship.volunteer,
-        certifications=scholarship.certifications,
-        weights=scholarship.weights
+        **scholarship.model_dump()
     )
 
     db.add(db_scholarship)
@@ -51,16 +36,8 @@ def update_scholarship(
     if scholarship is None:
         return None
 
-    scholarship.name = scholarship_update.name
-    scholarship.provider = scholarship_update.provider
-    scholarship.amount = scholarship_update.amount
-    scholarship.deadline = scholarship_update.deadline
-    scholarship.major = scholarship_update.major
-    scholarship.gpa_requirement = scholarship_update.gpa_requirement
-    scholarship.eligibility = scholarship_update.eligibility
-    scholarship.state = scholarship_update.state
-    scholarship.citizenship = scholarship_update.citizenship
-    scholarship.interests = scholarship_update.interests
+    for field, value in scholarship_update.model_dump().items():
+        setattr(scholarship, field, value)
 
     db.commit()
     db.refresh(scholarship)
@@ -89,24 +66,7 @@ def create_student(
     db: Session,
     student: schemas.StudentCreate
 ):
-    db_student = models.Student(
-        name=student.name,
-        email=student.email,
-        major=student.major,
-        gpa=student.gpa,
-        year=student.year,
-        university=student.university,
-        state=student.state,
-        citizenship=student.citizenship,
-        interests=student.interests,
-        skills=student.skills,
-        projects=student.projects,
-        leadership=student.leadership,
-        volunteer=student.volunteer,
-        certifications=student.certifications,
-        languages=student.languages,
-        awards=student.awards
-    )
+    db_student = models.Student(**student.model_dump())
 
     db.add(db_student)
     db.commit()
@@ -131,15 +91,8 @@ def update_student(
     if student is None:
         return None
 
-    student.name = student_update.name
-    student.email = student_update.email
-    student.major = student_update.major
-    student.gpa = student_update.gpa
-    student.year = student_update.year
-    student.university = student_update.university
-    student.state = student_update.state
-    student.citizenship = student_update.citizenship
-    student.interests = student_update.interests
+    for field, value in student_update.model_dump().items():
+        setattr(student, field, value)
 
     db.commit()
     db.refresh(student)
