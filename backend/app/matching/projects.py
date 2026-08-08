@@ -6,21 +6,30 @@ def check_projects(student, scholarship):
             "points": 0
         }
 
-    student_projects = student.projects.lower()
-    scholarship_projects = scholarship.projects.lower()
+    student_projects = student.projects.strip().lower()
+    scholarship_projects = scholarship.projects.strip().lower()
 
-    keywords = scholarship_projects.split()
+    if scholarship_projects in student_projects:
+        return {
+            "matched": True,
+            "points": 5,
+            "details": [
+                scholarship.projects
+            ]
+        }
 
-    matches = [
-        word for word in keywords
-        if word in student_projects
-    ]
+    student_words = set(student_projects.split())
+    scholarship_words = set(scholarship_projects.split())
+
+    matches = student_words.intersection(scholarship_words)
 
     if matches:
         return {
             "matched": True,
             "points": 5,
-            "details": matches
+            "details": [
+                scholarship.projects
+            ]
         }
 
     return {

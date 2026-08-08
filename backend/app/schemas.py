@@ -77,9 +77,12 @@ class MatchExplanation(BaseModel):
 class RecommendationMatch(BaseModel):
     score: int
     raw_score: int
+    match_level: str
     matched_on: list[str]
     explanations: list
-    summary: str
+    why_you_match: list[str]
+    missing_requirements: list[str]
+    application_tip: str
     scholarship: Scholarship
 
 
