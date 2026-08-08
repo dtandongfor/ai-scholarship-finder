@@ -1,29 +1,60 @@
+# app/matching/leadership.py
+
+from .knowledge import LEADERSHIP_KEYWORDS
+
+
 def check_leadership(student, scholarship):
 
-    if not student.leadership or not scholarship.leadership:
-        return {
-            "matched": False,
-            "points": 0
-        }
+    student_leadership = (
+        str(student.leadership).strip().lower()
+        if student.leadership
+        else ""
+    )
 
-    student_leadership = student.leadership.lower()
-    scholarship_leadership = scholarship.leadership.lower()
+    scholarship_leadership = (
+        str(scholarship.leadership).strip().lower()
+        if scholarship.leadership
+        else ""
+    )
 
-    keywords = scholarship_leadership.split()
-
-    matches = [
-        word for word in keywords
-        if word in student_leadership
-    ]
-
-    if matches:
+    # No scholarship requirement
+    if not scholarship_leadership:
         return {
             "matched": True,
             "points": 3,
-            "details": matches
+            "details": ["No leadership requirement."]
+        }
+
+    # Student has no leadership information
+    if not student_leadership:
+        return {
+            "matched": False,
+            "points": 0,
+            "details": ["No leadership experience listed."]
+        }
+
+    # Look specifically for actual leadership roles
+    matched_keyword = None
+
+    for keyword in LEADERSHIP_KEYWORDS:
+        if keyword in student_leadership:
+            matched_keyword = keyword
+            break
+
+    if matched_keyword:
+
+        return {
+            "matched": True,
+            "points": 3,
+            "details": [
+                f"{student.leadership}"
+            ]
         }
 
     return {
         "matched": False,
-        "points": 0
+        "points": 0,
+        "details": [
+            f"'{student.leadership}' does not indicate a leadership role."
+        ]
     }

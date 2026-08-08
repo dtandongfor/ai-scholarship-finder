@@ -106,6 +106,7 @@ SKILL_SYNONYMS = {
 LEADERSHIP_KEYWORDS = [
     "president",
     "vice president",
+    "vp",
     "chair",
     "captain",
     "leader",
@@ -113,6 +114,10 @@ LEADERSHIP_KEYWORDS = [
     "founder",
     "co-founder",
     "director",
+    "manager",
+    "officer",
+    "coordinator",
+    "executive",
     "mentor"
 ]
 
@@ -127,6 +132,39 @@ VOLUNTEER_KEYWORDS = [
     "charity",
     "outreach"
 ]
+
+
+VOLUNTEER_SYNONYMS = {
+
+    "tutoring": [
+        "tutor",
+        "tutoring",
+        "teaching",
+        "academic support"
+    ],
+
+    "coding": [
+        "programming",
+        "software development",
+        "computer science",
+        "technical"
+    ],
+
+    "stem": [
+        "science",
+        "technology",
+        "engineering",
+        "mathematics"
+    ],
+
+    "community service": [
+        "community outreach",
+        "nonprofit",
+        "charity",
+        "volunteer"
+    ]
+}
+
 
 
 CERTIFICATION_GROUPS = {

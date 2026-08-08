@@ -16,6 +16,7 @@ def match_all(student, scholarships):
 
         results.append(result)
 
+    # Highest match first
     results.sort(
         key=lambda x: x["score"],
         reverse=True
@@ -26,13 +27,16 @@ def match_all(student, scholarships):
 
 def match_one(student, scholarship):
 
-    score = 0
+    raw_score = 0
     matched_on = []
     explanations = []
 
     weights = scholarship.weights or {}
 
-    # Calculate score
+    # ==========================================
+    # CHECK EVERY MATCHING CATEGORY
+    # ==========================================
+
     for name, matcher in MATCHERS.items():
 
         check = matcher(
@@ -40,18 +44,16 @@ def match_one(student, scholarship):
             scholarship
         )
 
+        # Get the weight assigned to this category
+        weight = weights.get(
+            name,
+            DEFAULT_WEIGHTS.get(name, 0)
+        )
+
         if check["matched"]:
 
-            base_points = check["points"]
-
-            weight = weights.get(
-                name,
-                DEFAULT_WEIGHTS.get(name, 1)
-            )
-
-            final_points = base_points * weight
-
-            score += final_points
+            # The scholarship weight IS the points earned.
+            raw_score += weight
 
             matched_on.append(
                 name.title()
@@ -59,53 +61,83 @@ def match_one(student, scholarship):
 
             explanations.append({
                 "category": name.title(),
-                "points": final_points,
+                "points": weight,
                 "details": check.get(
                     "details",
                     []
                 )
             })
 
-    # Calculate maximum possible score
+    # ==========================================
+    # CALCULATE MAXIMUM POSSIBLE SCORE
+    # ==========================================
+
     max_score = 0
 
-    for name, matcher in MATCHERS.items():
+    for name in MATCHERS:
 
         weight = weights.get(
             name,
-            DEFAULT_WEIGHTS.get(name, 1)
+            DEFAULT_WEIGHTS.get(name, 0)
         )
 
-        try:
-            base_points = matcher(
-                student,
-                scholarship
-            )["points"]
+        max_score += weight
 
-            max_score += (
-                base_points * weight
-            )
+    # ==========================================
+    # CONVERT TO PERCENTAGE
+    # ==========================================
 
-        except Exception:
-            pass
-
-    # Convert to percentage
     if max_score > 0:
-        percentage = round(
-            (score / max_score) * 100
-        )
-    else:
-        percentage = 0
 
-    # Generate AI explanation
+        score = round(
+            (raw_score / max_score) * 100
+        )
+
+    else:
+
+        score = 0
+
+    # ==========================================
+    # DETERMINE MATCH LEVEL
+    # ==========================================
+
+    if score >= 80:
+
+        match_level = "Excellent Match"
+
+    elif score >= 60:
+
+        match_level = "Strong Match"
+
+    elif score >= 40:
+
+        match_level = "Good Match"
+
+    elif score >= 20:
+
+        match_level = "Potential Match"
+
+    else:
+
+        match_level = "Low Match"
+
+    # ==========================================
+    # GENERATE EXPLANATION
+    # ==========================================
+
     summary = generate_explanation({
         "scholarship": scholarship,
         "explanations": explanations
     })
 
+    # ==========================================
+    # RETURN RESULT
+    # ==========================================
+
     return {
-        "score": percentage,
-        "raw_score": score,
+        "score": score,
+        "raw_score": raw_score,
+        "match_level": match_level,
         "matched_on": matched_on,
         "explanations": explanations,
         "summary": summary,

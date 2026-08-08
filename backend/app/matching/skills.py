@@ -4,15 +4,45 @@ from .utils import normalize_list, semantic_match
 
 def check_skills(student, scholarship):
 
+    # ==========================================
+    # NO SCHOLARSHIP SKILL REQUIREMENT
+    # ==========================================
+
     if not scholarship.skills:
+
         return {
-            "matched": True,
-            "points": 1,
-            "details": ["No skill requirement."]
+            "matched": False,
+            "points": 0,
+            "details": []
         }
 
-    student_skills = normalize_list(student.skills)
-    scholarship_skills = normalize_list(scholarship.skills)
+    # ==========================================
+    # STUDENT HAS NO SKILLS
+    # ==========================================
+
+    if not student.skills:
+
+        return {
+            "matched": False,
+            "points": 0,
+            "details": []
+        }
+
+    # ==========================================
+    # NORMALIZE SKILLS
+    # ==========================================
+
+    student_skills = normalize_list(
+        student.skills
+    )
+
+    scholarship_skills = normalize_list(
+        scholarship.skills
+    )
+
+    # ==========================================
+    # FIND SEMANTIC MATCH
+    # ==========================================
 
     matched, student_match, scholarship_match = semantic_match(
         student_skills,
@@ -20,20 +50,32 @@ def check_skills(student, scholarship):
         SKILL_SYNONYMS
     )
 
+    # ==========================================
+    # MATCH FOUND
+    # ==========================================
+
     if matched:
+
         return {
             "matched": True,
-            "points": 1,
+            "points": 0,
             "details": [
-                f"{student_match.title()} satisfies {scholarship_match.title()}."
+                f"{student_match.title()} matches "
+                f"the required skill "
+                f"{scholarship_match.title()}."
             ]
         }
 
+    # ==========================================
+    # NO MATCH
+    # ==========================================
+
     return {
         "matched": False,
-        "points": 1,
-        "details": [
-            "Required skills not found."
-        ]
+        "points": 0,
+        "details": []
     }
+
+
+
 

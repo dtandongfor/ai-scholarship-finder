@@ -1,41 +1,59 @@
-from .knowledge import INTEREST_SYNONYMS
-from .utils import normalize_list, semantic_match
+from app.matching.utils import is_valid_value
 
 
 def check_interests(student, scholarship):
 
-    if not scholarship.interests:
+    if not is_valid_value(student.interests):
         return {
-            "matched": True,
-            "points": 1,
-            "details": ["No interest requirement."]
+            "matched": False,
+            "points": 0
         }
 
-    student_interests = normalize_list(student.interests)
-    scholarship_interests = normalize_list(scholarship.interests)
+    if not is_valid_value(scholarship.interests):
+        return {
+            "matched": False,
+            "points": 0
+        }
 
-    matched, student_match, scholarship_match = semantic_match(
-        student_interests,
-        scholarship_interests,
-        INTEREST_SYNONYMS
-    )
+    student_interests = student.interests.lower()
+    scholarship_interests = scholarship.interests.lower()
 
-    if matched:
+    student_items = [
+        item.strip()
+        for item in student_interests.split(",")
+        if item.strip()
+    ]
+
+    scholarship_items = [
+        item.strip()
+        for item in scholarship_interests.split(",")
+        if item.strip()
+    ]
+
+    matches = [
+        item
+        for item in scholarship_items
+        if any(
+            item in student_item
+            or student_item in item
+            for student_item in student_items
+        )
+    ]
+
+    if matches:
+
         return {
             "matched": True,
-            "points": 1,
+            "points": 15,
             "details": [
-                f"{student_match.title()} matches {scholarship_match.title()}."
+                f"{match.title()} matches {match.title()}."
+                for match in matches
             ]
         }
 
     return {
         "matched": False,
-        "points": 1,
-        "details": [
-            "No related interests found."
-        ]
+        "points": 0
     }
-
 
 
