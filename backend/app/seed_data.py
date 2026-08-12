@@ -13,16 +13,18 @@ SEED_FILE = BACKEND_DIR / "data" / "reviewed_scholarships.json"
 OVERRIDES_FILE = BACKEND_DIR / "data" / "scholarship_requirement_overrides.json"
 
 
-def seed_reviewed_catalog_if_empty() -> int:
-    """Load reviewed records only when a newly connected database has none."""
+def sync_reviewed_catalog() -> tuple[int, int]:
+    """Upsert the reviewed catalog so deployment updates reach the live database."""
 
     with SessionLocal() as db:
-        if db.query(models.Scholarship.id).first() is not None:
-            return 0
-
         records = json.loads(SEED_FILE.read_text(encoding="utf-8"))
         overrides = json.loads(OVERRIDES_FILE.read_text(encoding="utf-8"))
+        created = updated = 0
         for record in records:
             merged_record = {**record, **overrides.get(record.get("source_id"), {})}
-            ingest_scholarship(db, ScholarshipIngestRequest.model_validate(merged_record))
-        return len(records)
+            action, _ = ingest_scholarship(db, ScholarshipIngestRequest.model_validate(merged_record))
+            if action == "created":
+                created += 1
+            else:
+                updated += 1
+        return created, updated

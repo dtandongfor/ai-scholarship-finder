@@ -60,7 +60,7 @@ function appendMatch(list, match, profile) {
   }
   const link = node.querySelector(".apply-link");
   link.href = scholarship.application_url || scholarship.source_url;
-  link.firstChild.textContent = scholarship.requirements?.application_link_label || "Visit official application page ";
+  link.firstChild.textContent = scholarship.requirements?.application_link_label || "View official details and application steps ";
   const prepareButton = node.querySelector(".prepare-button");
   const prep = node.querySelector(".application-prep");
   if (noSeparateApplication) {

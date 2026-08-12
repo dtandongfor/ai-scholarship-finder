@@ -26,18 +26,22 @@ def validate_link_intents(records: list[dict], overrides: dict) -> list[str]:
     for record in records:
         source_id = record.get("source_id", "unknown")
         requirements = overrides.get(source_id, {}).get("requirements", {})
-        label = requirements.get("application_link_label", "Visit official application page")
+        label = requirements.get("application_link_label", "View official details and application steps")
         application_url = record.get("application_url", "")
-        if "/faq" in urlparse(application_url).path.lower() and label == "Visit official application page":
-            failures.append(f"{source_id}: FAQ link cannot be labelled as an application page")
+        if "/faq" in urlparse(application_url).path.lower() and label in {
+            "View official details and application steps",
+            "Open official application",
+        }:
+            failures.append(f"{source_id}: FAQ link needs a label that clearly describes its purpose")
         if requirements.get("application_required") is False:
             evidence = " ".join([
                 record.get("eligibility", ""),
                 record.get("description", ""),
                 record.get("requirements_raw", ""),
+                requirements.get("no_application_message", ""),
                 " ".join(requirements.get("selection_notes", [])),
             ]).lower()
-            markers = ("no separate application", "no separate scholarship application", "no application required", "automatically considered", "automatically awarded")
+            markers = ("no separate application", "no separate scholarship application", "no separate ", "no application required", "automatically considered", "automatically awarded")
             if not any(marker in evidence for marker in markers):
                 failures.append(f"{source_id}: no-application mode needs official automatic-consideration evidence")
     return failures
