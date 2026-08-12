@@ -1,3 +1,13 @@
+import re
+
+
+def parse_gpa(value):
+    """Extract a numeric GPA from a published requirement string."""
+
+    match = re.search(r"\d(?:\.\d+)?", str(value))
+    return float(match.group()) if match else None
+
+
 def check_gpa(student, scholarship):
 
     if not student.gpa or not scholarship.gpa_requirement:
@@ -7,8 +17,10 @@ def check_gpa(student, scholarship):
         }
 
     try:
-        student_gpa = float(student.gpa)
-        required_gpa = float(scholarship.gpa_requirement)
+        student_gpa = parse_gpa(student.gpa)
+        required_gpa = parse_gpa(scholarship.gpa_requirement)
+        if student_gpa is None or required_gpa is None:
+            raise ValueError
 
     except (ValueError, TypeError):
         return {

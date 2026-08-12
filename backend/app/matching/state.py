@@ -1,4 +1,5 @@
 from app.matching.utils import is_valid_value
+from .eligibility import normalize_state
 
 
 def check_state(student, scholarship):
@@ -15,8 +16,8 @@ def check_state(student, scholarship):
             "points": 0
         }
 
-    student_state = student.state.strip().lower()
-    scholarship_state = scholarship.state.strip().lower()
+    student_state = normalize_state(student.state)
+    scholarship_state = normalize_state(scholarship.state)
 
     if student_state == scholarship_state:
 

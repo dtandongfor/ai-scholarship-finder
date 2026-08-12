@@ -20,16 +20,20 @@ def find_existing_scholarship(db: Session, data: dict):
         if existing:
             return existing
 
-    for url_field in ("source_url", "application_url"):
-        url = data.get(url_field)
+    # Multiple separately named awards can legitimately share one official
+    # scholarship portal. A stable source ID therefore takes precedence over
+    # URL matching; otherwise imports silently overwrite one another.
+    if not source_id:
+        for url_field in ("source_url", "application_url"):
+            url = data.get(url_field)
 
-        if url:
-            existing = db.query(models.Scholarship).filter(
-                getattr(models.Scholarship, url_field) == url
-            ).first()
+            if url:
+                existing = db.query(models.Scholarship).filter(
+                    getattr(models.Scholarship, url_field) == url
+                ).first()
 
-            if existing:
-                return existing
+                if existing:
+                    return existing
 
     # A final fallback helps when the source provides no stable ID or URL.
     if data.get("name") and data.get("provider"):

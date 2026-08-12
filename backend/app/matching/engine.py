@@ -2,7 +2,7 @@ from .matchers import MATCHERS
 from ..config.defaults import DEFAULT_WEIGHTS
 from ..ai.explanation import generate_explanation
 from .utils import is_valid_value
-from .eligibility import check_eligibility
+from .eligibility import check_eligibility, normalize_state
 
 
 REQUIREMENT_FIELDS = {
@@ -33,10 +33,17 @@ def match_all(student, scholarships):
 
         results.append(result)
 
-    # Eligible scholarships appear first, then highest score first.
+    # Eligible scholarships appear first. For students who are eligible for
+    # an in-state opportunity, place that local result ahead of broadly
+    # available opportunities with the same match score.
     results.sort(
         key=lambda x: (
             x["eligible"],
+            bool(
+                getattr(x["scholarship"], "state", None)
+                and normalize_state(student.state)
+                == normalize_state(x["scholarship"].state)
+            ),
             x["score"]
         ),
         reverse=True
@@ -163,6 +170,9 @@ def match_one(student, scholarship):
         "ineligibility_reasons": (
             eligibility["ineligibility_reasons"]
         ),
+        "review_items": eligibility["review_items"],
+        "application_checklist": eligibility["application_checklist"],
+        "selection_notes": eligibility["selection_notes"],
         "match_level": match_level,
         "matched_on": matched_on,
         "explanations": explanations,

@@ -16,9 +16,13 @@ def check_major(student, scholarship):
         }
 
     student_major = student.major.strip().lower()
-    scholarship_major = scholarship.major.strip().lower()
+    scholarship_majors = {
+        item.strip().lower()
+        for item in scholarship.major.split(",")
+        if item.strip()
+    }
 
-    if student_major == scholarship_major:
+    if student_major in scholarship_majors:
 
         return {
             "matched": True,

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Intellible | Smarter scholarship matches</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <p class="eyebrow">Intellible <span class="beta-badge">Beta demo</span></p>
+      <h1>Find scholarships that fit your story.</h1>
+      <p class="hero-copy">Smarter scholarship matches for your future. Share a few details, then explore reviewed programs and their official application pages.</p>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="profile-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Step 1</p>
+            <h2 id="profile-heading">Build your profile</h2>
+          </div>
+          <p class="hint">Your information is only used to personalize your results.</p>
+        </div>
+
+        <section class="demo-profiles" aria-labelledby="demo-profiles-heading">
+          <div><p class="eyebrow">Demo shortcut</p><h3 id="demo-profiles-heading">Try an example profile</h3><p>Loads fictional details so you can see the matching paths without using personal information.</p></div>
+          <div class="example-buttons"><button type="button" data-example="first-year">First-year student</button><button type="button" data-example="transfer">Transfer student</button><button type="button" data-example="tech">Tech student</button><button type="button" id="reset-demo-button" class="secondary-button">Reset demo</button></div>
+        </section>
+        <form id="profile-form">
+          <div class="resume-prefill" aria-labelledby="resume-heading">
+            <div>
+              <p class="eyebrow">Optional shortcut</p>
+              <h3 id="resume-heading">Prefill from your resume</h3>
+              <p>Upload a PDF, Word document, or text resume. We suggest fields for you to review; your resume is not saved.</p>
+            </div>
+            <div class="resume-actions">
+              <input id="resume-upload" type="file" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" aria-label="Upload resume" />
+              <button type="button" id="resume-prefill-button">Read my resume</button>
+            </div>
+            <p class="resume-status" id="resume-status" role="status"></p>
+          </div>
+          <div class="form-grid">
+            <label>Full name<input name="name" required autocomplete="name" /></label>
+            <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+            <label>Major or intended major<input name="major" required placeholder="e.g., Computer Science" /></label>
+            <label>Current GPA<input name="gpa" required inputmode="decimal" placeholder="e.g., 3.6" /></label>
+            <label>Current year<select name="year" required><option value="">Choose one</option><option>High school senior</option><option>College freshman</option><option>College sophomore</option><option>College junior</option><option>College senior</option></select></label>
+            <label>School<input name="university" required placeholder="Your high school or college" /></label>
+            <label>Home state<select name="state" required><option value="">Choose a state</option></select></label>
+            <label>Citizenship<select name="citizenship" required><option value="US">U.S. citizen</option><option value="Permanent resident">Permanent resident</option><option value="Other">Other / not listed</option></select></label>
+            <label>Student type<select name="student_type"><option value="">Prefer not to say</option><option value="first_year">First-year / incoming student</option><option value="transfer">Transfer student</option><option value="current">Current college student</option><option value="graduate">Graduate student</option></select></label>
+            <label>Household income (optional)<input name="household_income" type="number" min="0" placeholder="Annual amount" /></label>
+            <label>SAT score (optional)<input name="sat_score" type="number" min="400" max="1600" /></label>
+            <label>ACT score (optional)<input name="act_score" type="number" min="1" max="36" /></label>
+            <label>Financial-aid form submitted?<select name="financial_aid_submitted"><option value="">Not sure / not yet</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Pell Grant eligible?<select name="pell_eligible"><option value="">Not sure</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Planned enrollment<select name="enrollment_status"><option value="">Not sure</option><option value="full_time">Full time</option><option value="part_time">Part time</option></select></label>
+            <label>College credits completed (optional)<input name="completed_credits" type="number" min="0" /></label>
+            <label>Volunteer hours (optional)<input name="volunteer_hours" type="number" min="0" /></label>
+            <label>Paid work hours (optional)<input name="work_hours" type="number" min="0" /></label>
+            <label>In good disciplinary standing?<select name="disciplinary_good_standing"><option value="">Prefer not to say</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Employer, union, or organization affiliation (optional)<input name="affiliations" placeholder="e.g., UnitedAg member company" /></label>
+            <label>Demonstrated financial need?<select name="demonstrated_financial_need"><option value="">Not sure</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Planned credits this term (optional)<input name="planned_term_credits" type="number" min="0" /></label>
+            <label>Open to a required post-graduation public/service role?<select name="accepts_service_commitment"><option value="">Not sure</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>First-generation college student?<select name="is_first_generation"><option value="">Prefer not to say</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Eligible for women-in-tech scholarships?<select name="eligible_for_women_tech_scholarships"><option value="">Prefer not to say</option><option value="true">Yes</option><option value="false">No</option></select></label>
+            <label>Can you pursue a U.S. security clearance if required?<select name="can_seek_security_clearance"><option value="">Not sure</option><option value="true">Yes</option><option value="false">No</option></select></label>
+          </div>
+          <label class="full-width">Interests or activities<input name="interests" required placeholder="e.g., volunteering, robotics, art" /></label>
+          <div class="form-grid additional-details">
+            <label>Skills (optional)<input name="skills" placeholder="e.g., Python, CAD, public speaking" /></label>
+            <label>Certifications (optional)<input name="certifications" placeholder="e.g., OSHA 10, CompTIA A+" /></label>
+            <label>Leadership (optional)<input name="leadership" placeholder="e.g., student council, team captain" /></label>
+            <label>Volunteer experience (optional)<input name="volunteer" placeholder="e.g., food bank, tutoring" /></label>
+            <label>Awards or honors (optional)<input name="awards" placeholder="e.g., honor roll, competition award" /></label>
+          </div>
+          <button type="submit" id="submit-button">Find my scholarships</button>
+          <button type="button" id="delete-profile-button" class="delete-profile-button" hidden>Delete my saved profile</button>
+          <p class="status" id="status" role="status">Optional questions make the match explanations more precise.</p>
+        </form>
+      </section>
+
+      <section id="results" class="results" aria-live="polite" hidden>
+        <div class="section-heading">
+          <div><p class="eyebrow">Step 2</p><h2>Your matches</h2></div>
+          <p class="hint" id="result-count"></p>
+        </div>
+        <section id="in-state-group" class="result-group" hidden>
+          <h3>In-state pathway</h3>
+          <p>Scholarships and programs specifically available in your home state.</p>
+          <div id="in-state-list" class="match-list"></div>
+        </section>
+        <section id="transfer-group" class="result-group" hidden>
+          <h3>Transfer pathway</h3>
+          <p>Programs that specifically welcome transfer students.</p>
+          <div id="transfer-list" class="match-list"></div>
+        </section>
+        <section id="other-group" class="result-group" hidden>
+          <h3>More eligible opportunities</h3>
+          <p>Programs that fit your profile but are not limited to either pathway above.</p>
+          <div id="other-list" class="match-list"></div>
+        </section>
+        <div id="empty-results" class="empty-results" hidden><h3>No confirmed matches yet</h3><p>We only show opportunities when the structured requirements are confirmed from your profile. Add optional details such as financial-aid status, student type, credits, or affiliations, then try again.</p></div>
+      </section>
+
+      <section class="feedback-panel" aria-labelledby="feedback-heading">
+        <p class="eyebrow">Help improve Intellible</p><h2 id="feedback-heading">Was this useful?</h2>
+        <form id="feedback-form" class="feedback-form"><label>Rating<select name="rating" required><option value="">Choose one</option><option value="5">5 — very useful</option><option value="4">4 — useful</option><option value="3">3 — okay</option><option value="2">2 — not very useful</option><option value="1">1 — not useful</option></select></label><label>Feedback type<select name="category" required><option value="useful">Useful result</option><option value="incorrect_match">Incorrect match</option><option value="missing_scholarship">Missing scholarship</option><option value="other">Other</option></select></label><label class="full-width">Optional note<textarea name="comment" maxlength="1000" placeholder="Tell us what worked or what should improve."></textarea></label><button type="submit">Send feedback</button><p class="status" id="feedback-status" role="status"></p></form>
+      </section>
+
+      <section class="external-searches" aria-labelledby="external-searches-heading">
+        <p class="eyebrow">More places to search</p>
+        <h2 id="external-searches-heading">Explore trusted external searches</h2>
+        <p>These links open separate services. Intellible does not copy, store, or claim to verify their listings; review each provider’s current rules before applying.</p>
+        <div class="external-links">
+          <a href="https://bigfuture.collegeboard.org/pay-for-college/scholarship-directory" target="_blank" rel="noreferrer">College Board BigFuture Scholarship Search <span aria-hidden="true">↗</span></a>
+          <a href="https://studentaid.gov/articles/scholarship-tips/" target="_blank" rel="noreferrer">Federal Student Aid scholarship resources <span aria-hidden="true">↗</span></a>
+          <a href="https://cof.org/page/community-foundation-locator" target="_blank" rel="noreferrer">Find a local community foundation <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+      <footer class="site-footer"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="project-overview.html">Project overview</a><span>Always confirm eligibility with the official provider.</span></footer>
+    </main>
+    <template id="match-template">
+      <article class="match-card">
+        <div class="match-top"><div><p class="provider"></p><h3></h3></div><span class="score"></span></div>
+        <p class="amount"></p><p class="description"></p>
+        <div class="reasons"></div>
+        <div class="unassessed-requirements" hidden></div>
+        <div class="no-application-note" hidden></div>
+        <div class="application-prep" hidden></div>
+        <button class="prepare-button" type="button">Prepare to apply</button>
+        <a class="apply-link" target="_blank" rel="noreferrer">Visit official application page <span aria-hidden="true">↗</span></a>
+      </article>
+    </template>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
