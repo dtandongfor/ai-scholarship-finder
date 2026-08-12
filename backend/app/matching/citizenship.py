@@ -1,4 +1,5 @@
 from .utils import is_valid_value
+from .eligibility import citizenship_matches
 
 
 def check_citizenship(student, scholarship):
@@ -15,10 +16,7 @@ def check_citizenship(student, scholarship):
             "points": 0
         }
 
-    student_citizenship = student.citizenship.strip().lower()
-    scholarship_citizenship = scholarship.citizenship.strip().lower()
-
-    if student_citizenship == scholarship_citizenship:
+    if citizenship_matches(student.citizenship, scholarship.citizenship):
         return {
             "matched": True,
             "points": 10,
