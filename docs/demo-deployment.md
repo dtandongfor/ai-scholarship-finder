@@ -7,10 +7,13 @@ The frontend can be shared as a static site, and the API can run from any Python
 ## Before publishing
 
 1. Deploy the `backend` service using its existing Python environment and start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
-2. Set `INTELLIBLE_ALLOWED_ORIGINS` to the exact address of the published frontend.
-3. Serve the `frontend` folder as a static site.
-4. Update `frontend/config.js` so `window.INTELLIBLE_API_BASE` is the public backend address, with no trailing slash.
-5. Open the public address on a phone and test an example profile, profile deletion, feedback, and an official scholarship link.
+2. In the backend host's environment settings, set `DATABASE_URL` to the complete Neon production-branch connection string. Do not put this secret in GitHub or `config.js`.
+3. Set `INTELLIBLE_ALLOWED_ORIGINS` to the exact address of the published frontend.
+4. Serve the `frontend` folder as a static site.
+5. Update `frontend/config.js` so `window.INTELLIBLE_API_BASE` is the public backend address, with no trailing slash.
+6. Open the public address on a phone and test an example profile, profile deletion, feedback, and an official scholarship link.
+
+When Intellible connects to a brand-new database, it automatically loads the reviewed, version-controlled scholarship catalog once. Later restarts preserve the database and do not duplicate those records.
 
 ## Important beta limitations
 

@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routes import ai, feedback, ingestion, scholarships, students, recommendations
 from .database import engine, Base, migrate_schema
 from . import models
+from .seed_data import seed_reviewed_catalog_if_empty
 from .routes import simulation
 from .routes import search
 from .routes import dashboard
@@ -12,6 +13,9 @@ from .rate_limit import WriteRateLimitMiddleware
 
 Base.metadata.create_all(bind=engine)
 migrate_schema()
+seeded_records = seed_reviewed_catalog_if_empty()
+if seeded_records:
+    print(f"Seeded {seeded_records} reviewed scholarship records into the new database.")
 
 app = FastAPI()
 

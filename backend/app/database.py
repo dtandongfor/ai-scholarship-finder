@@ -1,11 +1,20 @@
+import os
+
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "sqlite:///./scholarships.db"
+# Local development keeps using the included SQLite catalog. In Render, set
+# DATABASE_URL to the Neon connection string; the PostgreSQL driver is selected
+# automatically so the secret never needs to be stored in source code.
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./scholarships.db")
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg://", 1)
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine_options = {"pool_pre_ping": True}
+if DATABASE_URL.startswith("sqlite"):
+    engine_options["connect_args"] = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, **engine_options)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -17,7 +26,7 @@ Base = declarative_base()
 
 
 def migrate_schema():
-    """Add missing SQLite columns without deleting existing data."""
+    """Add missing columns without deleting existing data."""
 
     inspector = inspect(engine)
 
